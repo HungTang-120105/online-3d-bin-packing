@@ -32,3 +32,6 @@ output/
 
 # Các file tạm thời khác
 *.tmp
+
+# Ignore setuptools metadata
+*.egg-info/
