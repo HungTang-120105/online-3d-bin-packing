@@ -8,7 +8,8 @@ boxes = [
     Box(1, 2, 2, id=1),
     Box(3, 3, 1, id=2),
     Box(3, 3, 3, id=3),
-    Box(5, 5, 5, id=4),
+    Box(2, 2, 2, id=4),
+    Box(5, 5, 5, id=5),
 ]
 
 for box in boxes:
