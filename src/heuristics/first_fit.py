@@ -36,3 +36,4 @@ class FirstFitPacker:
 
     def animate(self):
         animate_bin_packing(self.frames, self.W, self.H, self.D)
+
