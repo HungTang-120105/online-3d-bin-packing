@@ -37,3 +37,7 @@ class FirstFitPacker:
     def animate(self):
         animate_bin_packing(self.frames, self.W, self.H, self.D)
 
+    def utilization(self):
+        total_volume = self.W * self.H * self.D
+        used_volume = sum(box.w * box.h * box.d for box in self.bin.boxes)
+        return used_volume / total_volume if total_volume > 0 else 0.0
