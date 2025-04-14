@@ -2,6 +2,7 @@ from src.core.bin import Bin
 from src.core.box import Box
 import copy
 from src.utils.visualization import animate_bin_packing
+import numpy as np
 
 class BestFit:
     def __init__(self, binsize = (1.0, 1.0, 1.0)):
@@ -20,45 +21,40 @@ class BestFit:
     step 6: Trả về True nếu đặt thành công, ngược lại trả về False
     """
 
-    def fit_score_1(self, box: Box, x: float, y: float, z: float) -> float:
+    def fit_score_1(self, box: Box, x: int, y: int) -> float:
+        z = self._get_z_base(box, x, y)
         return (self.W - (x + box.w)) * (self.H - (y + box.h)) * (self.D - (z + box.d))
     
-    def fit_score_2(self, box: Box, x: float, y: float, z: float) -> float:
-        return max([b.z + b.d for b in self.bin.boxes]) + (z + box.d) if self.bin.boxes else 0
+    def fit_score_2(self, box: Box, x: int, y: int) -> float:
+        z = self._get_z_base(box, x, y)
+        return np.max(self.bin.heightmap) + (z + box.d)
     
-    def evaluate_fit_score(self, box: Box, x: float, y: float, z: float, lamda) -> float:
-        # Tính toán điểm cho vị trí (x, y, z) dựa trên kích thước của box
-        return lamda * self.fit_score_1(box, x, y, z) + (1 - lamda) * self.fit_score_2(box, x, y, z)
-    
-    def place_box(self, box: Box, lamda=0.5):
-        candidate_positions = [(0, 0, 0)]
-            
-        for placed in self.bin.boxes:
-            candidate_positions.extend([
-                (placed.x + placed.w, placed.y, placed.z),
-                (placed.x, placed.y + placed.h, placed.z),
-                (placed.x, placed.y, placed.z + placed.d),
-            ])
+    def _get_z_base(self, box: Box, x: int, y: int) -> float:
+        region = self.bin.heightmap[y:y+box.h, x:x+box.w]
+        return float(np.max(region))
 
+    def evaluate_fit_score(self, box: Box, x: int, y: int, lamda: float) -> float:
+        return lamda * self.fit_score_1(box, x, y) + (1 - lamda) * self.fit_score_2(box, x, y)
+
+    def place_box(self, box: Box, lamda=0.5):
         best_position = None
         best_score = float('inf')
 
-        for (x, y, z) in candidate_positions:
-            if self.bin.can_place(box, x, y, z):
-                score = self.evaluate_fit_score(box, x, y, z, lamda)
-                if score < best_score:
-                    best_score = score
-                    best_position = (x, y, z)
+        for x in range(0, self.W - box.w + 1):
+            for y in range(0, self.H - box.h + 1):
+                if self.bin.can_place(box, x, y):
+                    score = self.evaluate_fit_score(box, x, y, lamda)
+                    if score < best_score:
+                        best_score = score
+                        best_position = (x, y)
 
         if best_position:
-            x, y, z = best_position
-            self.bin.place(box, x, y, z)
-            print(f" Box {box.id} placed at ({x}, {y}, {z})")
-            # Lưu trạng thái hiện tại (deepcopy để tránh bị thay đổi sau)
+            x, y = best_position
+            z = self._get_z_base(box, x, y)
+            self.bin.place(box, x, y)
             self.frames.append(copy.deepcopy(self.bin.boxes))
             return True
-        
-        print(f" Box {box.id} cannot be placed")
+
         return False
     
     def get_placed_boxes(self):

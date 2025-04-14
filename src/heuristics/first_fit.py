@@ -11,25 +11,18 @@ class FirstFitPacker:
         self.frames = []  # Lưu các trạng thái sau mỗi lần đặt box
 
     def place_box(self, box: Box):
-        candidate_positions = [(0, 0, 0)]
+        # Duyệt tất cả các vị trí khả thi trên mặt phẳng XY
+        for y in range(self.H - box.h + 1):
+            for x in range(self.W - box.w + 1):
+                if self.bin.can_place(box, x, y):
+                    placed_box = self.bin.place(box, x, y)
+                    # print(f"Box {box.id} placed at ({placed_box.x}, {placed_box.y}, {placed_box.z})")
+                    self.frames.append(copy.deepcopy(self.bin.boxes))
+                    return True
 
-        for placed in self.bin.boxes:
-            candidate_positions.extend([
-                (placed.x + placed.w, placed.y, placed.z),
-                (placed.x, placed.y + placed.h, placed.z),
-                (placed.x, placed.y, placed.z + placed.d),
-            ])
-
-        for (x, y, z) in candidate_positions:
-            if self.bin.can_place(box, x, y, z):
-                self.bin.place(box, x, y, z)
-                print(f" Box {box.id} placed at ({x}, {y}, {z})")
-                # Lưu trạng thái hiện tại (deepcopy để tránh bị thay đổi sau)
-                self.frames.append(copy.deepcopy(self.bin.boxes))
-                return True
-
-        print(f" Box {box.id} cannot be placed")
+        # print(f"Box {box.id} cannot be placed")
         return False
+
 
     def get_placed_boxes(self):
         return self.bin.boxes
