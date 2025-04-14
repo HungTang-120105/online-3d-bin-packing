@@ -11,7 +11,8 @@ packer =   BTB(tuple(generator.bin_size))
 boxes = [ Box(*(box_size)) for box_size in generator.box_size ]
 
 for box in boxes:
-    packer.place_box(box)
+    if not packer.place_box(box):
+        break
 
 
 print(f" Utilization: {packer.utilization()}") # Tính toán tỷ lệ sử dụng không gian
