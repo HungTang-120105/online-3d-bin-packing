@@ -27,12 +27,12 @@ class BTB:
         if best_position:
             x, y, z = best_position
             self.bin.place(box, x, y, z)
-            print(f" Box {box.id} placed at ({x}, {y}, {z})")
+            # print(f" Box {box.id} placed at ({x}, {y}, {z})")
             # Lưu trạng thái hiện tại (deepcopy để tránh bị thay đổi sau)
             self.frames.append(copy.deepcopy(self.bin.boxes))
             return True
         
-        print(f" Box {box.id} cannot be placed")
+        # print(f" Box {box.id} cannot be placed")
         return False
     
     def get_placed_boxes(self):
