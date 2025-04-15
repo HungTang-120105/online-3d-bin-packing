@@ -3,6 +3,8 @@ from src.core.box import Box
 import copy
 from src.utils.visualization import animate_bin_packing
 import numpy as np
+import itertools
+
 
 class BTB:
     def __init__(self, binsize = (1.0, 1.0, 1.0)):
@@ -15,26 +17,34 @@ class BTB:
     def place_box(self, box: Box):
         bin = self.bin
         best_position = None
+        best_rotation = None
 
-        for x in range(0, bin.W - box.w + 1):
-            for y in range(0, bin.H - box.h + 1):
-                # Lấy vùng trên heightmap
-                region = self.bin.heightmap[y:y+box.h, x:x+box.w]
-                z_base = np.max(region)  # Chiều cao tối đa tại vùng này
+        # Tạo tất cả các hướng xoay (w, h, d)
+        for rotation in set(itertools.permutations([box.w, box.h, box.d])):
+            rw, rh, rd = rotation
 
-                if self.bin.can_place(box, x, y):  # Kiểm tra vị trí (x, y) với z_base tính từ heightmap
-                    if best_position is None:
-                        best_position = (x, y, z_base)
-                    else:
-                        xb, yb, zb = best_position
-                        if z_base < zb or (z_base == zb and x < xb) or (z_base == zb and x == xb and y < yb):
+            # Duyệt các vị trí khả thi trên mặt phẳng XY
+            for x in range(0, bin.W - rw + 1):
+                for y in range(0, bin.H - rh + 1):
+                    # Lấy z-base từ heightmap
+                    region = bin.heightmap[y:y+rh, x:x+rw]
+                    z_base = region.max()
+
+                    # Kiểm tra có thể đặt box với kích thước đã xoay không
+                    if bin.can_place(box, x, y, rotation=rotation):
+                        if best_position is None:
                             best_position = (x, y, z_base)
+                            best_rotation = rotation
+                        else:
+                            xb, yb, zb = best_position
+                            if z_base < zb or (z_base == zb and x < xb) or (z_base == zb and x == xb and y < yb):
+                                best_position = (x, y, z_base)
+                                best_rotation = rotation
 
         if best_position:
-            x, y, z_base = best_position
-            z = z_base + box.d  # Tính z thực tế từ heightmap
-            self.bin.place(box, x, y)
-            self.frames.append(copy.deepcopy(self.bin.boxes))
+            x, y, _ = best_position
+            bin.place(box, x, y, rotation=best_rotation)
+            self.frames.append(copy.deepcopy(bin.boxes))
             return True
 
         return False

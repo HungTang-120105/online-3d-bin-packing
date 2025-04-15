@@ -12,9 +12,10 @@ boxes = [ Box(*(box_size)) for box_size in generator.box_size ]
 
 for box in boxes:
     if not packer.place_box(box):
+        print(f"Box {box.original_dim} cannot be placed.")
         break
 
 
-print(f" Utilization: {packer.utilization()}") # Tính toán tỷ lệ sử dụng không gian
+print(f" Utilization: {packer.utilization()}") 
 
-packer.animate()  # Tạo animation
+packer.animate()  
