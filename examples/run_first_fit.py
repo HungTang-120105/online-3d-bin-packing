@@ -1,20 +1,23 @@
-from src.heuristics.first_fit import FirstFitPacker
+from src.heuristics.first_fit import FirstFitBufferPacker
 from src.core.box import Box
 from src.utils.generatorBPP import generatorBPP
 
+# Khởi tạo generator và sinh dữ liệu
 generator = generatorBPP()
 generator._generator_1(numOfBox=100, bin_size=[10, 10, 10], seed=42)
 
-packer = FirstFitPacker(tuple(generator.bin_size))
+# Tạo danh sách các box từ dữ liệu đã sinh
+boxes = [Box(*box_size) for box_size in generator.box_size]
 
+# Khởi tạo packer với buffer_size và danh sách box
+packer = FirstFitBufferPacker(binsize=tuple(generator.bin_size), buffer_size=2, boxes=boxes)
 
-boxes = [ Box(*(box_size)) for box_size in generator.box_size ]
+# Chạy thuật toán đặt box
+packer.pack_all_boxes()
 
-for box in boxes:
-    if not packer.place_box(box):
-        break
+# In tỷ lệ sử dụng không gian
+print(f"Utilization: {packer.utilization():.2%}")
 
+# Trực quan hóa kết quả
+packer.animate()
 
-print(f" Utilization: {packer.utilization()}") # Tính toán tỷ lệ sử dụng không gian
-
-packer.animate()  # Tạo animation
