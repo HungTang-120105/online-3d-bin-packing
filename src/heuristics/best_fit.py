@@ -120,15 +120,16 @@ class BestFitBufferPacker:
             # Nếu không, vẫn tăng chỉ số (một số box sẽ được đưa vào buffer)
             i += 1
 
-            # Nếu buffer đã đầy và không thể đặt thêm box nào từ buffer, dừng thuật toán.
-            if len(self.buffer) >= self.buffer_size:
-                any_placed = False
-                for buf_box in self.buffer[:]:
-                    if self.place_box(buf_box, lamda):
-                        any_placed = True
-                if not any_placed:
-                    # print("Dừng lại: Buffer đầy và không thể đặt được thêm box nào.")
-                    break
+            if not placed:
+                # Nếu buffer đã đầy và không thể đặt thêm box nào từ buffer, dừng thuật toán.
+                if len(self.buffer) >= self.buffer_size:
+                    any_placed = False
+                    for buf_box in self.buffer[:]:
+                        if self.place_box(buf_box, lamda):
+                            any_placed = True
+                    if not any_placed:
+                        # print("Dừng lại: Buffer đầy và không thể đặt được thêm box nào.")
+                        break
 
     def get_placed_boxes(self):
         return self.bin.boxes

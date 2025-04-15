@@ -10,7 +10,7 @@ generator._generator_1(numOfBox=100, bin_size=[10, 10, 10], seed=42)
 boxes = [Box(*box_size) for box_size in generator.box_size]
 
 # Khởi tạo packer với buffer_size và danh sách box
-packer = BottomLeftBackBufferPacker(binsize=tuple(generator.bin_size), buffer_size=10, boxes=boxes)
+packer = BottomLeftBackBufferPacker(binsize=tuple(generator.bin_size), buffer_size=6, boxes=boxes)
 
 # Chạy thuật toán đặt box
 packer.pack_all_boxes()

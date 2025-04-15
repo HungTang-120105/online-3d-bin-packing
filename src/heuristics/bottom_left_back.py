@@ -107,15 +107,16 @@ class BottomLeftBackBufferPacker:
             placed = self.place_box(box)
             i += 1  # Chuyển sang box tiếp theo
 
-            # Nếu buffer đạt kích thước tối đa, thử duyệt lại buffer một lượt:
-            if len(self.buffer) >= self.buffer_size:
-                any_placed = False
-                for buf_box in self.buffer[:]:
-                    if self.place_box(buf_box):
-                        any_placed = True
-                if not any_placed:
-                    # print("Dừng lại: Buffer đầy và không thể đặt được thêm box nào.")
-                    break
+            if not placed:
+                # Nếu buffer đạt kích thước tối đa, thử duyệt lại buffer một lượt:
+                if len(self.buffer) >= self.buffer_size:
+                    any_placed = False
+                    for buf_box in self.buffer[:]:
+                        if self.place_box(buf_box):
+                            any_placed = True
+                    if not any_placed:
+                        # print("Dừng lại: Buffer đầy và không thể đặt được thêm box nào.")
+                        break
 
     def get_placed_boxes(self):
         return self.bin.boxes
