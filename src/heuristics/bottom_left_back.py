@@ -91,8 +91,8 @@ class BottomLeftBackBufferPacker:
             # Không tìm được candidate nào khả thi: thêm incoming_box vào buffer nếu chưa có và còn chỗ
             if incoming_box not in self.buffer and len(self.buffer) < self.buffer_size:
                 self.buffer.append(incoming_box)
-            else:
-                print(f"Buffer đầy, không thể đặt box {incoming_box.id}")
+            # else:
+                # print(f"Buffer đầy, không thể đặt box {incoming_box.id}")
             return False
 
     def pack_all_boxes(self):
@@ -114,7 +114,7 @@ class BottomLeftBackBufferPacker:
                     if self.place_box(buf_box):
                         any_placed = True
                 if not any_placed:
-                    print("Dừng lại: Buffer đầy và không thể đặt được thêm box nào.")
+                    # print("Dừng lại: Buffer đầy và không thể đặt được thêm box nào.")
                     break
 
     def get_placed_boxes(self):

@@ -58,7 +58,7 @@ class FirstFitBufferPacker:
                 self.buffer.append(box)
                 return False
             else:
-                print(f"Buffer đầy, không thể đặt box {box.id}")
+                # print(f"Buffer đầy, không thể đặt box {box.id}")
                 return False
 
     def pack_all_boxes(self):
@@ -87,7 +87,7 @@ class FirstFitBufferPacker:
                             new_buffer.append(buf_box)
                     self.buffer = new_buffer
                     if not any_placed:
-                        print("Dừng lại: Buffer đầy và không thể đặt được thêm box nào.")
+                        # print("Dừng lại: Buffer đầy và không thể đặt được thêm box nào.")
                         break
                 else:
                     # Nếu không đặt được nhưng buffer chưa đầy, chuyển sang box tiếp theo
