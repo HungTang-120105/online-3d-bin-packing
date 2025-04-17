@@ -35,3 +35,6 @@ output/
 
 # Ignore setuptools metadata
 *.egg-info/
+
+dataset-metadata.json
+
